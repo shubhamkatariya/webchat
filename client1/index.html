@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Welcome</title>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <link rel="shortcut icon" href="https://www.hdfc.com/sites/default/files/favicon_0.ico" type="image/vnd.microsoft.icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/style.css" type="text/css">
+    <script src="/socket.io/socket.io.js"></script>
+    <link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
+  </head>
+  <script>
+  $(function(){
+            var socket = io.connect();
+            $('#login-form').submit(function(){
+              data = {"name": $('#name').val(), "email": $('#email').val(), "phone": $('#phone').val()};
+             socket.emit('join', data);
+             return false;
+            });
+
+            socket.on("join_response", function(data) {
+              $('#welcome_login').text(data.welcome_msg);
+              $("#login-form").css("display", "none");
+              $("#chat-form").css("display", "block");
+            });
+
+            $('#chat-form').submit(function(){
+              console.log($('#msg').val());
+              console.log($('#welcome_login').text().split(' ')[1]);
+             socket.emit('chat_msg', {"msg": $('#msg').val(), "email": $('#welcome_login').text().split(' ')[1]});
+             return false;
+            });
+
+            socket.on("chat_msg_response", function(data) {
+              console.log(data);
+              $('#chat-info').append($('<li class="user-msg em em-some-emoji"></li><br><br>').text(data.msg));
+              $('#chat-info').append($('<li class="reply-msg"></li><br><br>').text(data.reply));
+
+            });
+          });
+          function openDialog() {
+              $('#toggle').addClass('dialog');
+           };
+   </script>
+  <body>
+    <button type="button" name="button" class="chat-now-btn" onclick="openDialog()">Chat now<span class="fa fa-chevron-up"></span></button>
+    <div id="toggle" class="toggle">
+      <div class="dialog-header" onclick="openDialog()">
+        <span id="welcome_login">Welcome </span><span class="fa fa-chevron-down tooltip"><span class="tooltiptext">Minimize window</span></span>
+      </div>
+      <form class="form" id="login-form" method="post">
+        <div class="input-group">
+          <p id="welcome-text">Welcome to our LiveChat! Please fill in the form below before starting the chat.</p>
+        </div>
+          <div class="input-group">
+            <label for="name" id="for-name">Name:</label>
+            <div><input type="text" name="name" id="name" max-width="30" required></div>
+          </div>
+          <div class="input-group">
+            <label for="email" id="for-email">E-mail:</label>
+            <div><input type="email" name="email" id="email" required></div>
+          </div>
+          <div class="input-group">
+            <label for="phone" id="for-phone">Telephone:</label>
+            <div><input type="tel" name="phone" id="phone" required></div>
+          </div>
+          <div class="input-group">
+            <label id="declaration">I declare that the information I have provided is accurate & complete to the best of my knowledge.
+              I hereby authorize Ltd. and its affiliates to call and/or send a text through the Short messaging Service (SMS) to me in relation
+              to any of their products.</label>
+            <div>
+              <input type="checkbox" name="checkbox" id="check" required> Accept
+            </div>
+          </div>
+          <button>Start the chat</button>
+        </form>
+        <div id="chat" class="">
+         <form class="content-wrapper" id="chat-form">
+            <div class="chat-div">
+              <ul class="chat-msg" id="chat-info"></ul>
+            </div>
+           <div class="wrapper-footer">
+             <input type="text" name="message" id="msg" placeholder="Type in your message here and press Enter to send" autofocus  autocomplete="off">
+             <button class="send-btn" type="submit">Send</button>
+           </div>
+       </form>
+     </div>
+  </body>
+</html>
