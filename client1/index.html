@@ -7,12 +7,12 @@
     <link rel="shortcut icon" href="https://www.hdfc.com/sites/default/files/favicon_0.ico" type="image/vnd.microsoft.icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="css/style.css" type="text/css">
-    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/vendor/socket.io.js"></script>
     <link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
   </head>
   <script>
   $(function(){
-            var socket = io.connect();
+            var socket = io.connect('http://2d186437.ngrok.io');
             $('#login-form').submit(function(){
               data = {"name": $('#name').val(), "email": $('#email').val(), "phone": $('#phone').val()};
              socket.emit('join', data);
